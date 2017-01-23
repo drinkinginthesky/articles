@@ -1,4 +1,60 @@
 https://www.sitepoint.com/10-tips-to-become-a-better-node-developer/?utm_source=nodeweekly&utm_medium=email#avoidblockingrequire
 # 10个技巧让你在2017年成为一个更优秀的Node开发者
 
-###这
+###这篇文章由客座作者Azat Mardan编写。SitePoint旨在给你带来web社区优秀的作家、演讲者的文章。
+
+NOTE：这篇文章原始的标题是“来自平台大师的Node最佳实践”。这篇文章包含真实，尝试和测试模式，尽管并不是2017最新的和最好的，但是这些大师们的优秀实践同样适用于2017、2018甚至2019，本文并不包含像async/await,promise等新特性。因为这些新特性并不包含在Node的核心代码或像npm、Express等流行项目之中，文章的第二部分将反射出内容的适当的特性。
+
+在2012年，我加入了Storify公司，开始了Node全栈生涯。从那时开始，我便从来没有后悔过放弃过去十年中使用过的语言，比如Python，Ruby，Java，PHP。
+
+Storify对我来说是一个有趣的工作，因为不像其他公司一样，Storify所有的项目都运行在JavaScript上（也许现在仍是这样）。正如你所知的，所有的公司，尤其像PayPal，Walmart或Capital One等大公司，只使用Node作为技术栈的一部分。一般使用Node来提供API或者用在业务层。这很棒，但是作为一名软件工程师，没有什么比完全使用Node更棒的了。
+
+在这一部分，我将列出十条建议能帮助你在2017成为一名更棒的Node开发者。这些建议一部分来自我工作中趟过的一些坑，另一些是从那些写了最流行的Node和npm模块的人们身上学到的：
+
+1.避免复杂性 -- 尽可能将你的代码块拆分到最小，要小到极致。
+2.使用异步代码 -- 要像躲避瘟疫一样避免同步代码。
+3.避免块级引用 -- 要将所有的require放在文件头部，因为require行为是同步的，将阻塞你代码的执行。
+4.要知道require是可以被缓存的 -- 这将是一把双刃剑，使用得当将有助于代码，否则将造成bug。
+5.要始终检查错误 -- 错误并不像足球一样，永远不要抛出错误或者忽略错误检查。
+6.只在同步代码中使用try...catch语句 -- try...catch语句对于异步代码是无效的，V8引擎无法优化try...catch语句。
+7.return callback或者使用if...else语句 -- 执行callback代码的时候一定要执行return语句，防止代码继续执行。
+8.监听异常事件 -- 几乎所有的Node class/object都具有观察者模式，并会广播错误事件。确保你监听了错误事件。
+9.了解你的npm -- 通过-s或者-d来代替--save和--save-dev来安装模块。
+10.在packa.json中使用明确的版本号 -- 当你使用-s时npm添加默认的模块，所以摆脱这些束缚，人工指定版本除了开源模块，永远不要在你的应用之中相信这些。
+11.附加项 --
+
+##避免复杂性
+
+来看一看由npm作者Isaac Z. Schlueter写的一些模块。例如，使用'use strict'强迫使模块使用严格模式，仅仅需要三行代码：
+
+```js
+var module = require('module');
+module.wrapper[0] += '"use strict";'
+Object.freeze(module.warp)
+```
+
+为什么要避免程序的复杂性呢？美国海军有一个著名的短语’KISS‘， KEEP IT SIMPLE STUPID。事实证明，人类的大脑在工作时只能记住5-7个项目。
+
+使你的代码模块化至更小的部分，使你和其他开发者能够更好的了理解这些模块，你也可以更方便的测试这些模块。看看下面这个例子：
+
+```js
+app.use(function (req, res, next) {
+    if(req.session.admin === true) return next()
+    else return next(new Error('Not authorized'))
+}, function (req, res, next) {
+    req.db = db
+    next()
+})
+```
+
+或者像下面这些代码：
+```js
+const auth = require('./middleware/auth.js')
+const db = require('./middleware/db.js')
+
+app.use(auth, db)
+```
+
+我敢肯定你们大部分人都会选择第二个例子，尤其是这些名字明确的描述了该模块的作用。当然，当你写下这些代码的时候你会知道这些代码是如何工作的。你甚至将几个方法放在一行中来展示你是多么机智。但事实上你写了一些愚蠢的代码。想象六个月以后你再读这些代码，就像是喝醉了之后写的。如果你是在你智商的巅峰写下这些代码，那么你以后将会很难去读懂这些代码，更不用说不懂你算法复杂性的同事了。保持代码简洁，尤其是在Node中使用异步的代码。
+
+
