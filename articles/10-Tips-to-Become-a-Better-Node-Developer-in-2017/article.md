@@ -57,4 +57,31 @@ app.use(auth, db)
 
 我敢肯定你们大部分人都会选择第二个例子，尤其是这些名字明确的描述了该模块的作用。当然，当你写下这些代码的时候你会知道这些代码是如何工作的。你甚至将几个方法放在一行中来展示你是多么机智。但事实上你写了一些愚蠢的代码。想象六个月以后你再读这些代码，就像是喝醉了之后写的。如果你是在你智商的巅峰写下这些代码，那么你以后将会很难去读懂这些代码，更不用说不懂你算法复杂性的同事了。保持代码简洁，尤其是在Node中使用异步的代码。
 
+当然也会有left-pad 事件，但是其实它只是影响了依赖于left-pad模块的项目而且11分钟后就发布了替代品。代码的最小化带来的好处超过了它的缺点。npm已经改变了发布策略,任何重要的项目都应该使用缓存或私有的源（作为临时解决方案）。
 
+##使用异步代码
+
+同步代码在Node中只占有很小一部分。大部分主要用在与web应用无关的CLI命令或者一些其他脚本之中。开发者们主要用Node来构建web应用，因此他们用异步代码来避免堵塞线程。
+
+就像下面的脚本，如果我们只用来构建一个连接数据库脚本或者用在一个并发不是很高的地方：
+
+```js
+let data = fs.readFileSync('./accounts.json')
+db.collection('accounts').insert(data, (results))=>{
+    fs.writeFileSync('./accountIDs.json', results, ()=>{process.exit(1)})
+})
+```
+但是下面的脚本在构建web应用的时候可以表现更好：
+```js
+app.use('/seed/:name', (req, res) => {
+  let data = fs.readFile(`./${req.params.name}.json`, ()=>{
+    db.collection(req.params.name).insert(data, (results))=>{
+      fs.writeFile(`./${req.params.name}IDs.json`, results, ()={res.status(201).send()})
+    })
+  })
+})
+```
+区别在于你在写一个并发（通常长期运行）或者非并发（短期运行）的系统。根据经验来说，总是在Node中使用异步代码。
+
+##避免块级引用
+Node采用了CommonJS模块格式的简单模块加载系统。
