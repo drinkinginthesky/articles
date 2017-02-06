@@ -84,4 +84,25 @@ app.use('/seed/:name', (req, res) => {
 区别在于你在写一个并发（通常长期运行）或者非并发（短期运行）的系统。根据经验来说，总是在Node中使用异步代码。
 
 ##避免块级引用
-Node采用了CommonJS模块格式的简单模块加载系统。
+Node采用了CommonJS模块格式的简单模块加载系统。它内嵌的require方法可以很方便地在不同文件中引入模块。不像AMD/requirejs，Node/CommonJS加载模块的方法是同步的。require是这样工作的：引入一个模块或者文件。
+```js
+const react = require('react')
+```
+但是大部分的开发者并不知道require是可以缓存的。所以，只要解析的文件名没有剧烈的变化（在npm模块没有的情况下），模块的代码将被执行并存入变量中（在当前进程），这是一个很好的优化。然而，即使有了缓存，你最好还是把require语句放在文件开头。看下面这段代码，只有在路由中真正使用到axios模块的时候才会去加载它。所以执行这个/connect路由时会因为加载模块而变得很慢。
+```js
+app.post('/connect', (req, res) => {
+    const axios = require('axios');
+    axios.post('/api/authorize', req.body.auth)
+        .then((response) => res.sent(response));
+});
+```
+一个更好，更高性能的方法是在这个服务没有定义之前就去引入这个模块，而不是在路由中去引入：
+```js
+const axios = require('axios');
+const express = require('express');
+app = express();
+app.post('/connect', (req, res) => {
+    axios.post('/api/authorize', req.body.auth)
+        .then((response) => res.end(response));
+});
+```
