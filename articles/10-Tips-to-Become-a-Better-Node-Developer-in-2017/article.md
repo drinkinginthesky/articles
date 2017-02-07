@@ -39,7 +39,7 @@ Object.freeze(module.warp)
 
 ```js
 app.use(function (req, res, next) {
-    if(req.session.admin === true) return next()
+    if (req.session.admin === true) return next()
     else return next(new Error('Not authorized'))
 }, function (req, res, next) {
     req.db = db
@@ -106,3 +106,83 @@ app.post('/connect', (req, res) => {
         .then((response) => res.end(response));
 });
 ```
+
+##知道require是被缓存的
+在上一节我提到require是被缓存的，有趣的是我们可以在module.exports外也会有代码。例如
+```js
+console.log('I will not be cached and only run once, the first time')
+
+module.exports = () => {
+    console.log('I will be cached and will run every time this module is invoked')
+}
+```
+要明白一些代买只执行一次，你可以利用这个特性来优化你的代码。
+
+##始终要检查错误
+
+并不像java一样，在java中，你可以抛出错误，因为大多数情况下你不想再让应用继续运行。在java中，你可以在外层使用一个try...catch语句就可以捕捉多个错误。
+
+然而在Node中并不是这样。自从Node使用了时间循环机制和异步执行方式，任何错误都和上下文的错误处理器分离开了（例如try...catch）当错误发生的时候，这在Node中是没有用的：
+```js
+try {
+    request.get('/accounts', (error, response) => {
+        data = JOSN.parse(response);
+    });
+} catch (error) {
+    //will not be called
+    console.log(error);
+}
+```
+但是try...catch语句在同步代码中仍然有效，所以前面的代码可以被更好的重构为：
+```js
+request.get('/accounts', (error, response) => {
+    try {
+        data = JSON.parse(response);
+    } catch (error) {
+        //will be called
+        console.log(error);
+    }
+});
+```
+如果我们不能把request返回内容包裹在try...catch中，那么我们将没有办法去处理请求错误。Node开发者通过将error作为一个回调参数来解决错误处理问题。这样，你需要手动在每个回调中去处理错误。你需要检查错误（判断不为null），然后将错误信息展示给用户或者在客户端通过日志记录下来，或者把错误传递给callback函数，把错误传递给上一级调用栈（如果调用栈上有callback函数的话）。
+```js
+request.get('/accounts', (error, response) => {
+    if (error) return console.error(error);
+    try {
+        data = JSON.parse(response);
+    } catch(error) {
+        console.error(error);
+    }
+});
+```
+一个小技巧是你可以使用okay库，你可以像下面的例子一样去使用它避免太深的回调（回调地狱）。
+
+```js
+var ok = require('okay');
+request.get('/accounts', ok(console.error, (response) => {
+    try {
+        data = JSON.parse(response);
+    } catch(error) {
+        console.error(error);
+    }
+}));
+```
+
+##返回回调或者使用if...else语句
+Node是并行的。如果你不够细心这个特性将会导致bug。安全起见，应该使用return来终止代码的继续运行：
+
+```js
+let error = true;
+if (error) return callback(error);
+console.log('i will nerver be run - good');
+```
+这样可以避免一些因为代码逻辑处理不当导致一些不该执行的内容（或者错误）被执行。
+
+```js
+let error = true;
+if (error) callback(error);
+console.log('i will run - not good');
+```
+确保使用return去避免程序的继续执行。
+
+##监听error事件
