@@ -186,3 +186,32 @@ console.log('i will run - not good');
 确保使用return去避免程序的继续执行。
 
 ##监听error事件
+大部分Node类/对象都有事件机制（观察者模式）并且广播错误事件。这对于开发者是一个很好地机会去捕捉并处理错误。
+养成一个通过使用.on来监听错误的好习惯：
+
+```js
+var req = http.request(options, (res) => {
+    if(('' + res.statusCode).match(/^2\d\d$/)) {
+        //success, prcess response
+    } else if (('' + res.statusCode).match(/^5\d\d$/)) {
+        //server error, not the same as req error req was ok
+    }
+})
+
+req.on('error', (error) => {
+    //cant even make a request: general error, e.g. ECONNRESET, ECONNREFUSED, HPE_INVALID_VERSION
+    console.log(error);
+})
+```
+
+##了解你的npm
+许多Node甚至前端开发人员都知道--save命令可以安装模块和在package.json中保存版本信息。当然，你也可以使用 --save-dev，来安装devDependencies（生产环境中不需要的模块）。但是你知道可以使用-s和-d来替代--save和--save-dev吗?
+
+当你安装模块的时候，记得删除使用-s和-d安装模块时自动添加的^符号。这些符号非常危险，因为它们将允许npm insall 或npm i命令，就会拉取最新的版本（版本号第二位的数字）。例如，V6.1.0就是V6.2.0的一个较小的版本。
+
+npm团队相信semver，但是你最好不要这样。npm团队认为开源开发者会遵守semver所以在模块安装时加上了……。但是没有人可以去保证，所以最好锁定你的版本号。最好是使用npm shrinkwrap会生成一个包含依赖的具体版本的文件
+
+##结束语
+这篇文章只是两篇文章中的第一篇，我们已经涵盖了很多知识点，从callback和异步代码到检查错误和锁定版本依赖。我希望你能从中学习到有用的知识。如果你喜欢，可以看我们的第二篇文章。
+[10 Node.js Best Practices: Enlightenment from the Node Gurus](https://www.sitepoint.com/node-js-best-practices-from-the-node-gurus/).
+
