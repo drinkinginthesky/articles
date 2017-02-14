@@ -46,7 +46,7 @@ fs.readFileAsync('./package.json').then(JSON.parse).then((data) => {
     console.error('error reading/parsing file', e);
 });
 ```
-当然，现在对于fs模块来说还没有readFileAsync接口去返回一个Promise方法。你可以引入[promisifyAll]()模块来添加readFileAsync接口。
+当然，现在对于fs模块来说还没有readFileAsync接口去返回一个Promise方法。你可以引入[promisifyAll](http://bluebirdjs.com/docs/api/promise.promisifyall.html)模块来添加readFileAsync接口。
 
 ###使用JavaScript标准样式
 
@@ -84,6 +84,7 @@ Trace会帮助你：
 分布式跟踪和错误搜索
 性能检测
 保证你的npm模块安全
+
 
 
 
