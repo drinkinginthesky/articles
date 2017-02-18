@@ -101,3 +101,16 @@ Trace会帮助你：
 [NSQ](http://nsq.io/)
 [AWS SQS](https://aws.amazon.com/cn/sqs/)
 
+###使用最新的LTS Nodejs版本
+
+为了获得最佳的稳定性和新特性，我们推荐你使用最新的LTS（长期支持）的Nodejs版本。当写这篇文章的时候，最新版本是6.9.2.
+
+为了很方便地切换Nodejs版本，你可以使用[nvm](https://github.com/creationix/nvm)。当你成功安装了nvm的时候，切换LTS版本只需要两个命令：
+
+```js
+nvm install 6.9.2
+nvm use 6.9.2
+```
+
+###使用语义化版本
+
