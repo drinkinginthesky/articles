@@ -34,9 +34,29 @@ def increment(a):
 map需要一个函数和一个存放元素的数组。它将生成一个新的空集合，在原始集合的每一个元素上运行函数，将每一个函数运行的返回值放入新的集合中。最后返回这个新集合。
 
 下面这个例子中map传入一个名字列表并返回名字长度的数组。
+```py
+name_lengths = map(len, ["mary", "isla", "sam"])
+print name_lengths
+```
 
+下面这个例子将数组中的每个数字进行平方
+```py
+squares = map(lambda x: x * x, [0, 1, 2, 3, 4])
+print squares
+```
+这个map传入了一个没有名字的函数。它传入了一个匿名的lambda定义的内联函数。冒号左边定义了匿名函数的参数，冒号右边定义了函数体。函数运行的结果被（隐性）返回。
 
+下面这段非函数式代码传入了一个名字的数组并将它们替换为代码名字。
 
+```py
+import random
+
+name = ['mary', 'isla', 'sam']
+code_names = ['mr.pink', 'mr.orange', 'mr.blonde']
+for i in range(len(names)):
+    name[i] = random.choice(code_names)
+print names
+```
 
 
 
