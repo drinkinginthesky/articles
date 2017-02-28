@@ -114,3 +114,50 @@ nvm use 6.9.2
 
 ###使用语义化版本
 
+几个月前我们进行了[Nodejs 开发者调查](https://blog.risingstack.com/node-js-developer-survey-results-2016/),这让我们了解对开发者们如何使用语义版本的一些见解。
+不幸的是，我们发现只有71%的受访人群在发布模块的时候会使用语义化版本。我认为这个数字应该更高，每个人都应该使用语义化版本！为什么呢？因为在我们更新模块的时候而没有semver将会很容易击垮我们的Nodejs应用。
+![image](https://blog-assets.risingstack.com/2016/Sep/node-js-survey/node-js-survey-semantic-versioning.png)<br/>
+
+版本化你的应用/模块是非常重要的 - 当你发布一个新版本时，你的用户必须知道他们应该做些什么去兼容这些新版本。
+这就是语义化版本的来源，给定一个版本号MAJOR.MINOR.PATCH等描述：
+
+MAJOR 当你对API进行一些不兼容的修改，
+MINOR 当你添加一些新的功能（并不影响API）
+PATCH 当你做一些向后兼容的bug修复
+
+npm也使用SemVer当安装你的依赖项时，所以当你发布模块时，一定要重视起来。否则，你将会影响到其他的应用。
+
+###确保你的应用程序的安全
+
+确保你的用户的数据安全应该是2017年的头等大事。在2016年中，因为不重视程序安全造成数百万用户信息泄露。
+要开始确保Nodejs安全，可以阅读我们的文章[Node.js Security Checklist](https://blog.risingstack.com/node-js-security-checklist/),其中涵盖了：
+
+加密HTTP请求头
+Brute Force Protection
+session管理
+不安全的依赖
+数据校验
+
+在你掌握了这些基本信息之后，你可以来看看我的演讲[Surviving Web Security with Node.js!](https://www.youtube.com/watch?v=80LbyikAUqI)
+
+###学习Serverless
+
+Serverless源于AWS Lambda，从诞生起就快速生长，并拥有一个爆炸生长的开源社区。
+在接下来的几年里，serverless将成为构建新应用的关键因素，如果你想站在技术的前沿，快去学习serverless吧。
+一个最为流行的框架是[Serverless Framework](https://serverless.com/),这将有助于部署AWS Lanbda函数。
+
+###参加聚会或者会议并发言
+
+参加会议或者聚会是一个非常棒的方式去学习新的潮流。use-cases或者最佳实践。同样也是个非常棒的方式去结交新的朋友。
+更进一步，我强烈建议你在这些会议中发言[one of these events](https://github.com/watson/conferences)!
+在公共场合发表演讲是艰难的，因为“想象所有的人都是裸体的”是最坏的建议，所以建议你上[speaking.io](http://speaking.io/)去寻找一些演讲的小技巧！
+
+###在2017年成为一个更加优秀的Nodejs开发者
+
+2017年将成为Nodejs的一年，我们将帮助你从中得到更多知识！
+我们刚刚推出了一个新的项目["Owning Node.js"](https://risingstack.com/owning-nodejs),它将帮助你在这些问题中更加自信：
+
+使用Nodejs进行异步编程
+使用Express创建应用
+使用Nodejs来操作数据库
+构建项目和可扩展的应用程序
