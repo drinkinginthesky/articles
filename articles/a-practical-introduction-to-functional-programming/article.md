@@ -51,20 +51,47 @@ print squares
 ```py
 import random
 
-name = ['mary', 'isla', 'sam']
+names = ['mary', 'isla', 'sam']
 code_names = ['mr.pink', 'mr.orange', 'mr.blonde']
 for i in range(len(names)):
     name[i] = random.choice(code_names)
 print names
 ```
+正如你所看到的，这个算法可以潜在地分配相同的密码给多个代理。希望这个不是某个加密的算法。
 
+这个算法可以用map来实现：
 
+```py
+import random
 
+names = ['mary', 'isla', 'sam']
+secret_names = map(lambda x : random.choice(['mr.pink', 'mr.orange', 'mr.blonde']), names)
+```
 
+练习 1：使用map重写以下方法，它传入了一个真实的名字列表，并用一个更健壮的策略产生的代码名替换它们。
 
+```py
+names = ['mary', 'isla', 'sam']
 
+for i in range(len(names)):
+    names[i] = hash(names[i])
+print names
+```
+希望秘密特工在秘密任务中有美好的回忆，不会忘记他们的密码。
+我的答案：
+```py
+names = ['mary', 'isla', 'sam']
+secret_names = map(hash, names)
+```
 
-
+###Reduce
+Reduce需要传入一个函数和一个集合。它返回通过组合项创建的值。
+下面是一个简单的例子，它返回集合中所有值的和。
+```py
+sum = reduce(lambda a, x : a + x, [0, 1, 2, 3, 4])
+print sum
+```
+x是当前循环中的元素。a是累加器，是lambda函数上一次运行的结果.redude()方法遍历集合中的每一个元素。对于每一次循环，程序都会在当前的a和x上运行lambda函数，并将函数的返回值作为下次循环a的值。
 
 
 
