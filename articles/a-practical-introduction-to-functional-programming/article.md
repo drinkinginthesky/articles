@@ -93,9 +93,30 @@ print sum
 ```
 x是当前循环中的元素。a是累加器，是lambda函数上一次运行的结果.redude()方法遍历集合中的每一个元素。对于每一次循环，程序都会在当前的a和x上运行lambda函数，并将函数的返回值作为下次循环a的值。
 
+a在第一次迭代的时候是多少呢，在之前并没有循环的结果传给它。reduce()函数使用集合里的第一个元素作为a，并在第二个元素上开始迭代。所以，第一次迭代的时候x是集合中的第二个元素。
+下面这段代码统计'Sam'在数组中出现的次数：
+```py
+sentences = ['Mary read a story to Sam and Isla.',
+             'Isla cuddled Sam.',
+             'Sam chortled.']
+sam_count = 0
+for sentence in sentences:
+    sam_count += sentence.count('Sam')
+print sam_count
+```
+使用reduce重写：
+```py
+sentences = ['Mary read a story to Sam and Isla.',
+             'Isla cuddled Sam.',
+             'Sam chortled.']
+sam_count = reduce(lambda a, x : a + x.count('Sam'), sentences, 0)
+```
+这段代码是怎么产生a的初始值的呢？最开始'Sam'的数量并不能成为'Mary read a story to Sam and Isla.'，所以初始值被赋值为reduce()函数的第三个参数。这种做法允许我们给a赋值一个与集合中元素不同种类的值。
 
+为什么使用map reduce更好呢？
 
-
+第一，它们经常被提及
+第二，
 
 
 
