@@ -116,8 +116,31 @@ sam_count = reduce(lambda a, x : a + x.count('Sam'), sentences, 0)
 为什么使用map reduce更好呢？
 
 第一，它们经常被提及
-第二，
+第二，迭代中的重要部分 - 集合，函数和返回值在每一个map和reduce中都有着固定的位置。
+第三，循环中的代码可能会影响到上下文中的代码或变量。一般来说，map/reduce都是函数式的。
+第四，map/reduce是元素的操作，每次人们阅读for循环代码的时候需要去一行一行的阅读逻辑。很少有规则的结构去展示他们的代码。对比而言，map和reduce拥有固定格式，并且可以组合成复杂的算法，阅读代码的人可以即时理解这些抽象的元素。“嗯，这个代码转换转换集合中的每一项元素。抛弃一些转换，并结合剩余部分并输出”
+第五，map/reduce有很多开发者们在其基础上提供一些有用的改进的方法。例如：filter, all, any 和 find。
 
+练习2.使用map、reduce和filter方法重写下面的代码。filter传入一个函数和集合，并返回一个函数返回值为ture的集合。
+```py
+people = [{'name': 'Mary', 'height': 160},
+          {'name': 'Isla', 'height': 80},
+          {'name': 'Sam'}]
+
+height_total = 0
+height_count = 0
+for person in people:
+    if 'height' in person:
+        height_total += person['height']
+        height_count += 1
+if height_count > 0:
+    average_height = height_total / height_count
+    print average_height
+```
+如果这看起来很棘手，请试图不要考虑基于数据的操作。假设是一种数据流，从包含人们信息的字典到平均身高。不要尝试去把几个不同的数据转换绑定在一起。把每一个方法都分开，并将结果赋值给一个描述性的变量名。一旦代码生效，去不断的精简代码。
+```py
+
+```
 
 
 
