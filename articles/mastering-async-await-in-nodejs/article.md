@@ -212,6 +212,112 @@ async function executeAsyncTask () {
   return function3(valueA, valueB)
 }
 ```
-使用async/await并发执行多个请求
-This is similar to the previous one. In case you want to execute several asynchronous tasks at once and then use their values at different places, you can do it easily with async/await:
-这个例子和上个
+###使用async/await并发执行多个请求
+
+这个例子和上个例子很相似，在例子中你想去同时执行数个异步任务，然后在不同的地方使用它们的返回值，你可以使用async/await轻松地实现：
+```js
+async function executeParallelAsyncTasks () {
+  const [ valueA, valueB, valueC ] = await Promise.all([ functionA(), functionB(), functionC() ])
+  doSomethingWith(valueA)
+  doSomethingElseWith(valueB)
+  doAnotherThingWith(valueC)
+}
+```
+正如我们在这个例子中看到的，我们不需要将这些返回值放入一个更高的作用域中或者创建一个不相关的数组去传递这些值。
+
+###数组遍历方法
+You can use map, filter and reduce with async functions, although they behave pretty unintuitively. Try guessing what the following scripts will print to the console:
+
+你可以在async函数中使用map、filter、reduce方法，虽然他们表现的不是很直观。试着猜测下面的代码会打印什么出来：
+
+1.map
+```js
+function asyncThing (value) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => resolve(value), 100)
+  })
+}
+
+async function main () {
+  return [1,2,3,4].map(async (value) => {
+    const v = await asyncThing(value)
+    return v * 2
+  })
+}
+
+main()
+  .then(v => console.log(v))
+  .catch(err => console.error(err))
+```
+filter
+```js
+function asyncThing (value) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => resolve(value), 100)
+  })
+}
+
+async function main () {
+  return [1,2,3,4].filter(async (value) => {
+    const v = await asyncThing(value)
+    return v % 2 === 0
+  })
+}
+
+main()
+  .then(v => console.log(v))
+  .catch(err => console.error(err))
+
+```
+
+reduce
+```js
+function asyncThing (value) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => resolve(value), 100)
+  })
+}
+
+async function main () {
+  return [1,2,3,4].reduce(async (acc, value) => {
+    return await acc + await asyncThing(value)
+  }, Promise.resolve(0))
+}
+
+main()
+  .then(v => console.log(v))
+  .catch(err => console.error(err))
+```
+###答案：
+1.[ Promise { <pending> }, Promise { <pending> }, Promise { <pending> }, Promise { <pending> } ]
+2.[ 1, 2, 3, 4 ]
+3.10
+
+If you log the returned values of the iteratee with map you will see the array we expect: [ 2, 4, 6, 8 ]. The only problem is that each value is wrapped in a Promise by the AsyncFunction.
+如果你记录map函数的返回值，我们期望的是[ 2, 4, 6, 8 ]，然而真实的返回值是包裹在Promise中的异步函数。
+
+如果你想得到你的期望值，你需要将函数返回的数组用Promise.all方法去解除Promise的包裹。
+```js
+main()
+  .then(v => Promise.all(v))
+  .then(v => console.log(v))
+  .catch(err => console.error(err))
+```
+Originally, you would first wait for all your promises to resolve and then map over the values:
+最初，你先等待你的所有的promises对象resolve之后再去遍历他们的值：
+```js
+function main () {
+  return Promise.all([1,2,3,4].map((value) => asyncThing(value)))
+}
+
+main()
+  .then(values => values.map((value) => value * 2))
+  .then(v => console.log(v))
+  .catch(err => console.error(err))
+```
+
+这看起来更简单一点，不是吗？
+如果你在循环里有长时间运行的同步逻辑和其他长时间运行的异步逻辑，这时使用async/await同样是很有用的。
+This way you can start calculating as soon as you have the first value -
+you don't have to wait for all the Promises to be resolved to run your computations. Even though the results will still be wrapped in Promises, those are resolved a lot faster then if you did it the sequential way.
+这样你就可以在你得到第一个值的时候就开始计算 - 你不必等待所有的Promise在resolve之后再去运行你的计算，尽管这些结果都被包裹在promise中
